@@ -186,17 +186,13 @@
     }
 
     .app-card {
-      display: none;
+      display: flex;
       align-items: center;
       gap: 12px;
       border-radius: 22px;
       background: var(--card);
       padding: 14px;
       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
-    }
-
-    .app-card.visible {
-      display: flex;
     }
 
     .app-icon {
@@ -351,27 +347,7 @@
 
     </section>
 
-    <section class="apps">
-      <article class="app-card visible" data-store="esign">
-        <div class="app-icon">
-          <svg viewBox="0 0 64 64" aria-hidden="true">
-            <defs>
-              <linearGradient id="esignBg" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#3b9bff"></stop>
-                <stop offset="100%" stop-color="#1d6fe8"></stop>
-              </linearGradient>
-            </defs>
-            <rect width="64" height="64" rx="14" fill="url(#esignBg)"></rect>
-            <text x="32" y="38" text-anchor="middle" fill="white" font-family="Georgia, 'Times New Roman', serif" font-size="13" font-style="italic" font-weight="700">E-Sign</text>
-          </svg>
-        </div>
-        <div class="copy">
-          <p class="app-name">ESign</p>
-          <p class="app-meta">HSBC Bank</p>
-        </div>
-        <button type="button" class="install-btn" data-plist="kfccjimokhko">INSTALL</button>
-      </article>
-    </section>
+    <section class="apps" id="esign-list"></section>
   </div>
 
   <div class="toast" id="ios-toast" role="status">
@@ -388,8 +364,32 @@
 
   <script>
     const PLIST_BASE = "itms-services://?action=download-manifest&url=https://website.khoindvn.io.vn/plists/";
-    const tabs = document.querySelectorAll(".tab");
-    const cards = document.querySelectorAll(".app-card");
+    const ESIGN_APPS = [
+      { name: "ESign", meta: "HSBC Bank", plist: "kfccjimokhko" },
+      { name: "ESign", meta: "CENTRAL POWER", plist: "djdacmhfoked" },
+      { name: "ESign Central Power V1", meta: "CENTRAL POWER", plist: "nicnfhfmckpb" },
+      { name: "ESign", meta: "Viet Nam Rubber", plist: "hegmnlhdholo" },
+      { name: "ESign", meta: "Jiangsu Simcere", plist: "pghpdpcgblmp" },
+      { name: "ESign Jiangsu Simcere V1", meta: "Jiangsu Simcere", plist: "jgkbnpmnlaed" },
+      { name: "ESign", meta: "Moving Increasingly", plist: "ifjcekhpbcop" },
+      { name: "ESign Moving Increasingly V1", meta: "Moving Increasingly", plist: "kpcbaajmkbon" },
+      { name: "ESign", meta: "China Telecom", plist: "idcpodehdgbm" },
+      { name: "ESign China Telecom V1", meta: "China Telecom", plist: "bhpiamjijnip" },
+      { name: "ESign", meta: "Qingdao Rural", plist: "jodbddhkdjdp" },
+      { name: "ESign", meta: "Aramco", plist: "ckahjfoobmdn" },
+      { name: "ESign", meta: "Commission Elections", plist: "dgaefbobaeop" },
+      { name: "ESign", meta: "National Oilwell", plist: "namafilokpoh" },
+      { name: "ESign", meta: "BOC", plist: "dgjfclelmbbj" },
+      { name: "ESign BOC V1", meta: "BOC", plist: "jilleopfhlag" },
+      { name: "ESign BOC V2", meta: "BOC", plist: "ionmpkdkbjfl" },
+      { name: "ESign BOC V3", meta: "BOC", plist: "kkadkilafalg" },
+      { name: "ESign", meta: "PowerChina", plist: "dkdgcdnjieff" },
+      { name: "ESign PowerChina V1", meta: "PowerChina", plist: "apedpcajmiki" },
+      { name: "ESign PowerChina V2", meta: "PowerChina", plist: "gdpjnjkinphp" },
+      { name: "ESign PowerChina V3", meta: "PowerChina", plist: "kbgdljengifc" },
+      { name: "ESign PowerChina V4", meta: "PowerChina", plist: "eoekkbmccjbc" }
+    ];
+
     const toast = document.getElementById("ios-toast");
     let toastTimer;
 
@@ -404,15 +404,32 @@
       toastTimer = setTimeout(() => toast.classList.remove("show"), 3500);
     }
 
-    tabs.forEach((tab) => {
-      tab.addEventListener("click", () => {
-        const store = tab.dataset.tab;
-        tabs.forEach((item) => item.classList.toggle("active", item === tab));
-        cards.forEach((card) => {
-          card.classList.toggle("visible", card.dataset.store === store);
-        });
-      });
-    });
+    function esignIcon(id) {
+      return `
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <defs>
+            <linearGradient id="esignBg${id}" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#3b9bff"></stop>
+              <stop offset="100%" stop-color="#1d6fe8"></stop>
+            </linearGradient>
+          </defs>
+          <rect width="64" height="64" rx="14" fill="url(#esignBg${id})"></rect>
+          <text x="32" y="38" text-anchor="middle" fill="white" font-family="Georgia, 'Times New Roman', serif" font-size="13" font-style="italic" font-weight="700">E-Sign</text>
+        </svg>
+      `;
+    }
+
+    const list = document.getElementById("esign-list");
+    list.innerHTML = ESIGN_APPS.map((app, index) => `
+      <article class="app-card">
+        <div class="app-icon">${esignIcon(index)}</div>
+        <div class="copy">
+          <p class="app-name">${app.name}</p>
+          <p class="app-meta">${app.meta}</p>
+        </div>
+        <button type="button" class="install-btn" data-plist="${app.plist}">INSTALL</button>
+      </article>
+    `).join("");
 
     document.querySelectorAll(".install-btn").forEach((button) => {
       button.addEventListener("click", () => {
